@@ -5,7 +5,7 @@ public enum OrderStatus {
     OVERTIME(-2,"支付超时"),
     WAS_CANCELED(-1,"已取消"),
     UNPAID(0,"未付款"),
-    PAID(1,"待入住"),
+    PAID(1,"已付款(待入住)"),
     CHECK_IN(2,"已入住")
     ;
 

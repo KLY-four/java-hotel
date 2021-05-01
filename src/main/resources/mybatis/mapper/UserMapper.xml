@@ -11,13 +11,24 @@
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="address" jdbcType="VARCHAR" property="address" />
     <result column="idcard" jdbcType="VARCHAR" property="idcard" />
+    <result column="vip" jdbcType="VARCHAR" property="vip" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+
   </resultMap>
   <sql id="Base_Column_List">
     user_id, username, password, name, gender, phone, email, address, idcard, create_time, 
-    update_time
+    update_time,vip
   </sql>
+
+  <delete id="batchDeleteByPrimaryKey" >
+    delete from user_info
+    where user_id in
+    <foreach collection="array" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </delete>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -62,11 +73,11 @@
     insert into user_info (user_id, username, password, 
       name, gender, phone, email, 
       address, idcard, create_time, 
-      update_time)
+      update_time,vip)
     values (#{userId,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{name,jdbcType=VARCHAR}, #{gender,jdbcType=CHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
       #{address,jdbcType=VARCHAR}, #{idcard,jdbcType=VARCHAR}, now(),
-      now())
+      now(),#{vip})
   </insert>
   <insert id="insertSelective" parameterType="cn.mafangui.hotel.entity.User">
     insert into user_info

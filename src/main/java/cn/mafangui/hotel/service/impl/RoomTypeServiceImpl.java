@@ -3,6 +3,7 @@ package cn.mafangui.hotel.service.impl;
 
 import cn.mafangui.hotel.entity.RoomType;
 import cn.mafangui.hotel.mapper.RoomTypeMapper;
+import cn.mafangui.hotel.service.RoomService;
 import cn.mafangui.hotel.service.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,9 @@ import java.util.Map;
 public class RoomTypeServiceImpl implements RoomTypeService {
     @Autowired
     private RoomTypeMapper roomTypeMapper;
+
+    @Autowired
+    private RoomService roomService;
 
     @Override
     public int decrement(int rest) {
@@ -47,12 +51,16 @@ public class RoomTypeServiceImpl implements RoomTypeService {
 
     @Override
     public RoomType selectById(int typeId) {
-        return roomTypeMapper.selectByTypeId(typeId);
+        RoomType roomType = roomTypeMapper.selectByTypeId(typeId);
+        List<String> strings = roomService.selectRoomIdByTypeId(typeId);
+        roomType.setRoomId(strings);
+        return roomType;
     }
 
     @Override
     public List<RoomType> findAllType() {
-        return roomTypeMapper.selectAll();
+        List<RoomType> roomTypes = roomTypeMapper.selectAll();
+        return roomTypes;
     }
 
     @Override

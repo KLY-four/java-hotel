@@ -47,6 +47,4 @@ public class UserRoomController {
     public AjaxResult getById(@PathVariable int typeId){
         return ResponseTool.success(roomTypeService.selectById(typeId));
     }
-
-
 }

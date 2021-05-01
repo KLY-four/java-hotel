@@ -32,8 +32,8 @@ public class OpWorkerController {
         String substring = data.substring(0, data.length() - 1);
         String[] split = substring.split(",");
         int re = workerService.batchDelete(split);
-        if(re!=1) ResponseTool.failed();
-        return ResponseTool.success("删除成功");
+        if(re<=0){ return ResponseTool.failed();}else {
+        return ResponseTool.success("删除成功");}
     }
 
     @RequestMapping(value = "")

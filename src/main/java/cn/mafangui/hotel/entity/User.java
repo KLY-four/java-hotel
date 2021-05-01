@@ -25,6 +25,16 @@ public class User {
 
     private Date updateTime;
 
+    private String vip;
+
+    public String getVip() {
+        return vip;
+    }
+
+    public void setVip(String vip) {
+        this.vip = vip;
+    }
+
     public Integer getUserId() {
         return userId;
     }
@@ -116,7 +126,8 @@ public class User {
     public User() {
     }
 
-    public User(String username, String password, String name, String gender, String phone, String email, String address, String idcard) {
+    public User(Integer userId, String username, String password, String name, String gender, String phone, String email, String address, String idcard, Date createTime, Date updateTime, String vip) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
         this.name = name;
@@ -125,6 +136,9 @@ public class User {
         this.email = email;
         this.address = address;
         this.idcard = idcard;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
+        this.vip = vip;
     }
 
     @Override
@@ -141,6 +155,7 @@ public class User {
                 ", idcard='" + idcard + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
+                ", vip='" + vip + '\'' +
                 '}';
     }
 }

@@ -1,14 +1,18 @@
 package cn.mafangui.hotel.controller.user;
 
 import cn.mafangui.hotel.entity.Order;
+import cn.mafangui.hotel.entity.RoomType;
 import cn.mafangui.hotel.entity.User;
 import cn.mafangui.hotel.enums.OrderStatus;
 import cn.mafangui.hotel.response.AjaxResult;
 import cn.mafangui.hotel.response.MsgType;
 import cn.mafangui.hotel.response.ResponseTool;
 import cn.mafangui.hotel.service.OrderService;
+import cn.mafangui.hotel.service.RoomService;
 import cn.mafangui.hotel.service.RoomTypeService;
 import cn.mafangui.hotel.service.UserService;
+import com.mysql.cj.util.StringUtils;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,31 +37,43 @@ public class UserOrderController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RoomService roomService;
+
     /**
      * 添加预订
      * 订单状态默认为未付款状态
-     * @param orderTypeId
-     * @param orderType
-     * @param userId
-     * @param name
-     * @param phone
-     * @param roomTypeId
-     * @param roomType
-     * @param orderDate
-     * @param orderDays
-     * @param orderCost
      * @return
      */
     @RequestMapping(value = "/add")
-    public AjaxResult addOrder(int orderTypeId,String orderType, int userId,String name, String phone,int roomTypeId, String roomType,
-                        @DateTimeFormat(pattern = "yyyy-MM-dd") Date orderDate, Integer orderDays, Double orderCost,Integer discount){
-        orderCost=orderCost*discount/100;
+    public AjaxResult addOrder(@DateTimeFormat(pattern = "yyyy-MM-dd") Date orderDate,Integer roomId,String name,Double discount
+                                ,Integer orderTypeId,String orderType,Integer userId,String phone,Integer roomTypeId,String roomType,
+                                Integer orderDays, Integer orderStatus,Double orderCost, String vip){
+        if(vip.equals("true")) {
+             orderCost=orderCost*orderDays*discount/10;
+        }
         String.format("%.2f", orderCost);
-        Order order = new Order(orderTypeId,orderType,userId,name,phone,roomTypeId,
-                roomType,orderDate,orderDays, OrderStatus.UNPAID.getCode(),orderCost);
+        Order order = new Order();
+        order.setOrderDate(orderDate);
+        order.setOrderCost(orderCost);
+        order.setOrderDays(orderDays);
+        order.setPhone(phone);
+        order.setName(name);
+        order.setUserId(userId);
+        order.setOrderType(orderType);
+        order.setOrderStatus(orderStatus);
+        order.setOrderTypeId(orderTypeId);
+        order.setRoomTypeId(roomTypeId);
+        order.setRoomType(roomType);
+        if(roomId==null){
+            RoomType type = roomTypeService.selectById(roomTypeId);
+            List<String> typeId = type.getRoomId();
+            roomId=Integer.valueOf(typeId.get(0));
+        }
+        order.setRoomNumber(roomId);
         int re = orderService.addOrder(order);
         if(re==1){
-            int re1 = roomTypeService.decrement(order.getRoomTypeId());
+            int re1 = roomService.updateStatusByRoomNumber(roomId,2);
             return ResponseTool.success(MsgType.SUCCESS);
         }else {
             return ResponseTool.failed(MsgType.FAILED);
@@ -114,7 +130,6 @@ public class UserOrderController {
      */
     @RequestMapping(value = "")
     public AjaxResult getAllByUser(int userId){
-        System.out.println(userId);
         return ResponseTool.success(orderService.UsersAllOrders(userId));
     }
 
@@ -126,7 +141,6 @@ public class UserOrderController {
     @RequestMapping(value = "/{orderId}")
     public AjaxResult getById(@PathVariable int orderId){
         Order order = orderService.selectByOrderId(orderId);
-        System.out.println(order);
         if(order!=null) {
             return ResponseTool.success(order);
         }else {

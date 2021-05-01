@@ -20,10 +20,8 @@ public class OpInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession();
         if(session.getAttribute("role").equals(Role.OPERATOR.getValue()) ||
                 session.getAttribute("role").equals(Role.ADMIN.getValue())){
-            System.out.println("请求未被拦截");
             return true;
         }else {
-            System.out.println("请求被拦截");
             setCorsMappings(request, response);
             PrintWriter writer = response.getWriter();
             AjaxResult result = ResponseTool.failed(MsgType.PERMISSION_DENIED);

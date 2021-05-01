@@ -11,4 +11,3 @@ spring:
 mybatis:
   type-aliases-package: classpath*:cn.mafangui.hotel.entity
   mapper-locations: classpath*:mybatis/mapper/*.xml
-debug: true

@@ -37,7 +37,7 @@ public class OpBookingTypeController {
         String substring = data.substring(0, data.length() - 1);
         String[] split = substring.split(",");
         int re= orderTypeService.batchDeleteOrderType(split);
-        if(re!=1) return ResponseTool.failed();
+        if(re<=0) return ResponseTool.failed();
         return ResponseTool.success();
     }
 

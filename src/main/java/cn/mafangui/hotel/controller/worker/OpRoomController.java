@@ -56,9 +56,9 @@ public class OpRoomController {
     public AjaxResult batchDeleteRoom(String data){
         String substring = data.substring(0, data.length() - 1);
         String[] split = substring.split(",");
-        if(roomService.batchDelete(split)!=1)
-            return ResponseTool.failed("删除失败");
-        return ResponseTool.success("删除成功");
+        if(roomService.batchDelete(split)<=0){
+            return ResponseTool.failed("删除失败");}else {
+        return ResponseTool.success("删除成功");}
     }
 
 

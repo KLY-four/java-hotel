@@ -11,13 +11,13 @@ public interface OrderService {
 
     int addOrder(Order order);
 
-    int select();
+    Integer select();
 
     List<Order> getOrderByPhone(String phone);
 
     int delete(Integer orderId);
 
-    int batchDeleteOrder(String[] data);
+    Integer batchDeleteOrder(String[] data);
 
     Order selectByOrderId(Integer orderId);
 

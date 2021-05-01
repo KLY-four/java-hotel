@@ -16,7 +16,11 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    type_id,room_type,remark,price,discount,area,bed_num,bed_size,chuanghu,rest,create_time,update_time
+    type_id,room_type,remark,price,discount,area,bed_num,bed_size,chuanghu,create_time,update_time
+  </sql>
+
+  <sql id="Base_Column_List1">
+   type.type_id,type.room_type,type.remark,price,type.discount,area,type.bed_num,bed_size,chuanghu,type.create_time,type.update_time
   </sql>
 
   <select id="getCount" resultType="java.lang.Integer">
@@ -27,7 +31,7 @@
     where type_id = #{typeId,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select * from room_type
+    select  <include refid="Base_Column_List1"></include>, (select count(*) from room_info info where type.type_id=info.type_id and info.room_status=1) rest from room_type type
   </select>
   <select id="selectAllWithRest" resultMap="BaseResultMap">
     select

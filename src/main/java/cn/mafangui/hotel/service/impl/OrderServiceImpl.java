@@ -43,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public int select() {
+    public Integer select() {
         return orderMapper.selectMapper();
     }
 
@@ -58,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public int batchDeleteOrder(String[] data) {
+    public Integer batchDeleteOrder(String[] data) {
         return orderMapper.batchDeleteByPrimaryKey(data);
     }
 
@@ -72,12 +72,12 @@ public class OrderServiceImpl implements OrderService {
         Order order = new Order();
         order.setName(name);
         order.setPhone(phone);
-        if("undefined".equals(i)) {
-            System.out.println(11111);
+        if("1".equals(i)) {
             order.setOrderStatus(OrderStatus.PAID.getCode());
-        }else {
-            System.out.println(2222);
+        }else if("2".equals(i)) {
             order.setOrderStatus(OrderStatus.CHECK_IN.getCode());
+        }else {
+            order.setOrderStatus(5435);
         }
         return orderMapper.selectByNameAndPhone(order);
     }
@@ -103,10 +103,10 @@ public class OrderServiceImpl implements OrderService {
         if (order == null | order.getOrderStatus() != OrderStatus.UNPAID.getCode()) {
             return -3;
         }
-        if (roomTypeService.updateRest(order.getRoomTypeId(),-1) != 1){
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return -2;
-        }
+//        if (roomTypeService.updateRest(order.getRoomTypeId(),-1) != 1){
+//            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//            return -2;
+//        }
         order.setOrderStatus(OrderStatus.PAID.getCode());
         if (orderMapper.updateByPrimaryKeySelective(order) != 1){
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
@@ -123,14 +123,14 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     @Override
+    @Transactional
     public int cancelOrder(int orderId) {
         Order order = orderMapper.selectByOrderId(orderId);
         if (order == null ) return -3;
         order.setOrderStatus(OrderStatus.WAS_CANCELED.getCode());
-        if (roomTypeService.updateRest(order.getRoomTypeId(),1) != 1){
-            return -2;
-        }
-        return orderMapper.updateByPrimaryKeySelective(order);
+        orderMapper.updateByPrimaryKeySelective(order);
+        roomService.updateStatusByRoomNumber(order.getRoomNumber(),1);
+        return 1;
     }
 
     @Override

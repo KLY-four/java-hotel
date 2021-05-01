@@ -3,15 +3,9 @@ package cn.mafangui.hotel.entity;
 import java.util.Date;
 
 public class Order {
-    private Integer discount;
+    private Double discount;
 
-    public Integer getDiscount() {
-        return discount;
-    }
 
-    public void setDiscount(Integer discount) {
-        this.discount = discount;
-    }
 
     private Integer orderId;
 
@@ -22,6 +16,16 @@ public class Order {
     private Integer userId;
 
     private String name;
+
+    private Integer roomNumber;
+
+    public Integer getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(Integer roomNumber) {
+        this.roomNumber = roomNumber;
+    }
 
     private String phone;
 
@@ -156,18 +160,12 @@ public class Order {
     public Order() {
     }
 
-    public Order(Integer orderTypeId, String orderType, Integer userId, String name, String phone, Integer roomTypeId, String roomType, Date orderDate, Integer orderDays, Integer orderStatus, Double orderCost) {
-        this.orderTypeId = orderTypeId;
-        this.orderType = orderType;
-        this.userId = userId;
-        this.name = name;
-        this.phone = phone;
-        this.roomTypeId = roomTypeId;
-        this.roomType = roomType;
-        this.orderDate = orderDate;
-        this.orderDays = orderDays;
-        this.orderStatus = orderStatus;
-        this.orderCost = orderCost;
+    public Double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Double discount) {
+        this.discount = discount;
     }
 
     public Order(Integer orderId, Integer orderStatus) {
@@ -176,24 +174,5 @@ public class Order {
     }
 
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "discount=" + discount +
-                ",orderId=" + orderId +
-                ", orderTypeId=" + orderTypeId +
-                ", orderType='" + orderType + '\'' +
-                ", userId=" + userId +
-                ", name='" + name + '\'' +
-                ", phone='" + phone + '\'' +
-                ", roomTypeId=" + roomTypeId +
-                ", roomType='" + roomType + '\'' +
-                ", orderDate=" + orderDate +
-                ", orderDays=" + orderDays +
-                ", orderStatus=" + orderStatus +
-                ", orderCost=" + orderCost +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                '}';
-    }
+
 }

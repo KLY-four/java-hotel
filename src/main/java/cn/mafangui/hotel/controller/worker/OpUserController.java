@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -39,9 +40,20 @@ public class OpUserController {
         return ResponseTool.success();
     }
 
+
+    @RequestMapping(value = "/batchDelete")
+    public AjaxResult batchDeleteUser(String data){
+        String substring = data.substring(0, data.length() - 1);
+        String[] split = substring.split(",");
+        System.out.println(Arrays.toString(split));
+        Integer re = userService.batchDeleteUser(split);
+        if(re<=0) {return ResponseTool.failed(MsgType.FAILED);}else {
+            return ResponseTool.success("删除成功.");
+        }
+    }
+
     @RequestMapping(method = RequestMethod.POST,value = "/add")
-    public AjaxResult userAdd(String username,String password,String name,String gender,String phone,String email,String address,String idcard){
-        User user = new User(username,password,name,gender,phone,email,address,idcard);
+    public AjaxResult userAdd(User user){
         int re = userService.addUser(user);
         if(re!=1) return ResponseTool.failed();
         return ResponseTool.success();

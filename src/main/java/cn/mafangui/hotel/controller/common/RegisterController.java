@@ -36,8 +36,7 @@ public class RegisterController {
     }
 
     @RequestMapping(method = RequestMethod.POST,value = "/register")
-    public AjaxResult userRegister(String username, String password, String name, String gender, String phone, String email, String address, String idcard){
-        User user = new User(username,password,name,gender,phone,email,address,idcard);
+    public AjaxResult userRegister(User user){
         int result = userService.insertUser(user);
         if(result==1){
             return ResponseTool.success(result);

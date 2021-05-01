@@ -103,7 +103,7 @@ public class OpRoomTypeController {
      * @param typeId
      * @return
      */
-    @RequestMapping(method = RequestMethod.POST,value = "/delete/{typeId}")
+    @RequestMapping(value = "/delete/{typeId}")
     public AjaxResult deleteRoomType(@PathVariable Integer typeId){
         int result = roomTypeService.delete(typeId);
         if(result!=1) return ResponseTool.failed("删除失败");
@@ -114,8 +114,8 @@ public class OpRoomTypeController {
         String substring = data.substring(0, data.length() - 1);
         String[] split = substring.split(",");
         int result=roomTypeService.batchDelete(split);
-        if(result!=1) return ResponseTool.failed("删除失败");
-        return ResponseTool.success("删除成功");
+        if(result<=0){ return ResponseTool.failed("删除失败");}else {
+        return ResponseTool.success("删除成功");}
     }
 
 

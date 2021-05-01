@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -98,4 +99,16 @@ public class RoomServiceImpl implements RoomService {
         return roomMapper.updateByPrimaryKeySelective(room);
     }
 
+    @Override
+    public List<String> selectRoomIdByTypeId(Integer typeId) {
+        return roomMapper.selectRoomIdByTypeId(typeId);
+    }
+
+    @Override
+    public int updateStatusByRoomNumber(Integer roomNumber,Integer status) {
+        HashMap<String,Integer> map = new HashMap<>();
+        map.put("roomNumber",roomNumber);
+        map.put("status",status);
+        return roomMapper.updateStatusByRoomNumber(map);
+    }
 }

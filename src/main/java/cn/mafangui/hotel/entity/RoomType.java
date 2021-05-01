@@ -1,6 +1,7 @@
 package cn.mafangui.hotel.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class RoomType {
     private Integer typeId;
@@ -22,6 +23,24 @@ public class RoomType {
     private Integer chuanghu;
 
     private Integer rest;
+
+    private List<String> roomId;
+
+    public Integer getChuanghu() {
+        return chuanghu;
+    }
+
+    public void setChuanghu(Integer chuanghu) {
+        this.chuanghu = chuanghu;
+    }
+
+    public List<String> getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(List<String> roomId) {
+        this.roomId = roomId;
+    }
 
     public Integer getRest() {
         return rest;
@@ -150,6 +169,8 @@ public class RoomType {
                 ", bedNum=" + bedNum +
                 ", bedSize='" + bedSize + '\'' +
                 ", chuanghu=" + chuanghu +
+                ", rest=" + rest +
+                ", roomId=" + roomId +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';

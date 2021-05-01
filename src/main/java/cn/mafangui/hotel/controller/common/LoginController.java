@@ -42,6 +42,7 @@ public class LoginController {
         HashMap map = new HashMap<>();
         map.put("sessionId",session.getId());
         map.put("userId",user.getUserId());
+        map.put("vip",user.getVip());
         return ResponseTool.success(map);
     }
 
@@ -55,7 +56,7 @@ public class LoginController {
         }
         Worker worker = workerService.login(username,password);
         if(worker==null){
-            return ResponseTool.failed("用户名或密码不正确");
+            return ResponseTool.failed("用户名,密码不正确或用户不存在");
         }
         HttpSession session = request.getSession();
         session.setAttribute("userId",worker.getWorkerId());
@@ -67,5 +68,4 @@ public class LoginController {
         map.put("workerId",String.valueOf(worker.getWorkerId()));
         return ResponseTool.success(map);
     }
-
 }

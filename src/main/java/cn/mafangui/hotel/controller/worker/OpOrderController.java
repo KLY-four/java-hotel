@@ -6,13 +6,16 @@ import cn.mafangui.hotel.response.AjaxResult;
 import cn.mafangui.hotel.response.MsgType;
 import cn.mafangui.hotel.response.ResponseTool;
 import cn.mafangui.hotel.service.OrderService;
+import cn.mafangui.hotel.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -25,15 +28,29 @@ public class OpOrderController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private RoomService roomService;
+
     /**
      * 添加预订
      * 订单状态默认为未付款状态
      */
     @RequestMapping(value = "/add")
     public AjaxResult addOrder(int orderTypeId,String orderType, int userId,String name, String phone,int roomTypeId, String roomType,
-                        @DateTimeFormat(pattern = "yyyy-MM-dd") Date orderDate, Integer orderDays, Double orderCost){
-        Order order = new Order(orderTypeId,orderType,userId,name,phone,roomTypeId,
-                roomType,orderDate,orderDays, OrderStatus.UNPAID.getCode(),orderCost);
+                        @DateTimeFormat(pattern = "yyyy-MM-dd") Date orderDate, Integer orderDays, Double orderCost,Integer roomId,Integer orderStatus){
+        Order order = new Order();
+        order.setOrderDate(orderDate);
+        order.setOrderCost(orderCost);
+        order.setOrderDays(orderDays);
+        order.setPhone(phone);
+        order.setName(name);
+        order.setUserId(userId);
+        order.setOrderType(orderType);
+        order.setOrderStatus(orderStatus);
+        order.setOrderTypeId(orderTypeId);
+        order.setRoomNumber(roomId);
+        order.setRoomTypeId(roomTypeId);
+        order.setRoomType(roomType);
         int re = orderService.addOrder(order);
         if(re!=1) return ResponseTool.failed(MsgType.FAILED);
         return ResponseTool.success("添加成功.");
@@ -48,21 +65,35 @@ public class OpOrderController {
     }
 
 
-    @RequestMapping(value = "/batchDelete")
+    @RequestMapping(value = "/batchDelete")  //批量删除订单
     public AjaxResult batchDeleteOrder(String data){
         String substring = data.substring(0, data.length() - 1);
         String[] split = substring.split(",");
-        int re = orderService.batchDeleteOrder(split);
-        if(re!=1) return ResponseTool.failed(MsgType.FAILED);
-        return ResponseTool.success("删除成功.");
+        System.out.println(Arrays.toString(split));
+        Integer re = orderService.batchDeleteOrder(split);
+        System.out.println(re);
+        if(re<=0) {return ResponseTool.failed(MsgType.FAILED);}else {
+            return ResponseTool.success("删除成功.");
+        }
     }
 
 
     @RequestMapping(value = "/update")
     public AjaxResult updateOrder(int orderId,int orderTypeId,String orderType, int userId,String name, String phone,int roomTypeId, String roomType,
-                           @DateTimeFormat(pattern = "yyyy-MM-dd") Date orderDate, Integer orderDays, Double orderCost){
-        Order order = new Order(orderTypeId,orderType,userId,name,phone,roomTypeId,
-                roomType,orderDate,orderDays, OrderStatus.UNPAID.getCode(),orderCost);
+                           @DateTimeFormat(pattern = "yyyy-MM-dd") Date orderDate, Integer orderDays, Double orderCost,Integer roomId,Integer orderStatus){
+        Order order = new Order();
+        order.setOrderDate(orderDate);
+        order.setOrderCost(orderCost);
+        order.setOrderDays(orderDays);
+        order.setPhone(phone);
+        order.setName(name);
+        order.setUserId(userId);
+        order.setOrderType(orderType);
+        order.setOrderStatus(orderStatus);
+        order.setOrderTypeId(orderTypeId);
+        order.setRoomNumber(roomId);
+        order.setRoomTypeId(roomTypeId);
+        order.setRoomType(roomType);
         int re =  orderService.update(order);
         if(re!=1) return ResponseTool.failed(MsgType.FAILED);
         return ResponseTool.success("修改成功.");
@@ -144,7 +175,6 @@ public class OpOrderController {
      */
     @RequestMapping(value = "/withNameAndPhone/{i}")
     public AjaxResult getByNameAndPhone(String name,String phone,@PathVariable String i) {
-        System.out.println(i);
         Order order = orderService.selectByNameAndPhone(name, phone,i);
         if(order!=null){
             return ResponseTool.success(order);
@@ -155,26 +185,29 @@ public class OpOrderController {
     }
 
     @RequestMapping(value = "/update/status/{i}")
+    @Transactional(rollbackFor = {Exception.class})
     public AjaxResult updateOrderStatus(String name,String phone,@PathVariable Integer i){
-        Order order1 = orderService.selectByNameAndPhone(name, phone,String.valueOf(i));
+        Order order1 = orderService.selectByNameAndPhone(name, phone,String.valueOf(i-1));
         if(order1!=null){
             Order order = new Order();
             order.setName(name);
             order.setPhone(phone);
             if(i==2) {
                 order.setOrderStatus(2);
-                return ResponseTool.success(orderService.updateOrderStatusService(order));
+                int i1=orderService.updateOrderStatusService(order);
+                int i2=roomService.updateStatusByRoomNumber(order1.getRoomNumber(),3);
+                return ResponseTool.success(1);
             }else if(i==3){
                 order.setOrderStatus(3);
-                return ResponseTool.success(orderService.updateOrderStatusService(order));
+                int i1=orderService.updateOrderStatusService(order);
+                int i2=roomService.updateStatusByRoomNumber(order1.getRoomNumber(),1);
+                    return ResponseTool.success(1);
             }else {
                 return ResponseTool.failed("请求错误");
             }
         }else {
             return ResponseTool.failed("没有该用户或该用户不符合入住/退房条件");
         }
-
-
     }
 
     @RequestMapping(value = "/by/phone/{data}")
@@ -188,14 +221,15 @@ public class OpOrderController {
 
     }
 
-    @RequestMapping(value = "/select")
+    @RequestMapping(value = "/select") //查询已接受的所有订单，包括已经删除的订单
     public AjaxResult select(){
         Integer count = orderService.select();
         System.out.println(count);
-        if(count!=null){
+        if(count==null){
+            count=0;
             return ResponseTool.success(count);
         }else {
-            return ResponseTool.failed("操作失败");
+            return ResponseTool.success(count);
         }
 
     }

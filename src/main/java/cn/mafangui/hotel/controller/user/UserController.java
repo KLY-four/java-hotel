@@ -78,10 +78,10 @@ public class UserController {
     public AjaxResult getProfile(HttpServletRequest request){
         String username = (String) request.getSession().getAttribute("username");
         User user = userService.selectByUsername(username);
-        if(user==null) return ResponseTool.failed("未知错误");
+        if(user==null) return ResponseTool.failed("未查询到该用户信息");
         user.setPassword(null);
         StringBuilder sb = new StringBuilder(user.getIdcard());
-        sb.replace(5,12,"********");
+        sb.replace(6,19,"************");
         user.setIdcard(sb.toString());
         return ResponseTool.success(user);
     }

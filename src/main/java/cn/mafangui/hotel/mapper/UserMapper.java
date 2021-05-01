@@ -10,6 +10,8 @@ import java.util.List;
 public interface UserMapper {
     int deleteByPrimaryKey(Integer userId);
 
+    int batchDeleteByPrimaryKey(String[] s);
+
     int insert(User record);
 
     List<User> getUserByPhoneMapper(String phone);

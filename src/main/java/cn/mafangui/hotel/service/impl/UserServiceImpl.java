@@ -38,13 +38,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public int insertUser(User user) {
 //        user.setPassword(MD5Utils.MD5Encode(user.getPassword())); 加密
-        user.setPassword(user.getPassword());
+     //   user.setPassword(user.getPassword());
         return userMapper.insert(user);
     }
 
     @Override
     public int deleteUser(int userId) {
         return userMapper.deleteByPrimaryKey(userId);
+    }
+
+    @Override
+    public int batchDeleteUser(String[] s) {
+        return userMapper.batchDeleteByPrimaryKey(s);
     }
 
     @Override

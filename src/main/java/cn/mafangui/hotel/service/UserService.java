@@ -19,6 +19,8 @@ public interface UserService {
 
     int deleteUser(int userId);
 
+    int batchDeleteUser(String[] s);
+
     int updateUser(User user);
 
     Integer getUserCount();
